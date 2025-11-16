@@ -23,7 +23,7 @@ Proiect educațional realizat în cadrul materiei Tehnologii Web
 București 2025
 Academia de Studii Economice din București
 Facultatea de Cibernetică, Statistică și Informatică Economică 
-Echipa de dezvoltare:
+Echipa de dezvoltare Kit&Miautette, formată din:
     • Condurache-Bota Dora-Elena
     • Georgescu Ionuț-Bogdan
 
