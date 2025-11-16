@@ -3,7 +3,9 @@ ________________________________________________________________________________
 #RO
 _________________________________________________________________________________________________________________________________________
 
-Anti Food Waste App este o aplicație web care ajută utilizatorii să gestioneze alimentele din frigider și să reducă risipa alimentară. Aplicația are ca scop crearea unui spațiu unde utilizatorii își pot oferi prietenilor sau grupurilor produsele pe care nu le mai consumă. Astfel totul se realizează într-un mod simplu, comunitar și organizat.
+Anti Food Waste App este o aplicație web care ajută utilizatorii să gestioneze alimentele din frigider și să reducă risipa alimentară. 
+Aplicația are ca scop crearea unui spațiu unde utilizatorii își pot oferi prietenilor sau grupurilor produsele pe care nu le mai consumă. 
+Astfel totul se realizează într-un mod simplu, comunitar și organizat.
 _________________________________________________________________________________________________________________________________________
 
 Functionalități principale:
@@ -48,7 +50,9 @@ ________________________________________________________________________________
 #EN
 _________________________________________________________________________________________________________________________________________
 
-Anti Food Waste App is a web application designed to help users manage the food in their fridge and reduce food waste. The application aims to create a space where users can share products they no longer consume with their friends or groups. Everything is done in a simple, community-based and organized way.
+Anti Food Waste App is a web application designed to help users manage the food in their fridge and reduce food waste. 
+The application aims to create a space where users can share products they no longer consume with their friends or groups. 
+Everything is done in a simple, community-based and organized way.
 Main functionalities:
 •	Food management;
 •	Expiration alerts;
