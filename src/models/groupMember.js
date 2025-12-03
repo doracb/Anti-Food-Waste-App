@@ -11,7 +11,7 @@ const GroupMember = sequelize.define("GroupMember", {
   group_id: {
     type: DataTypes.UUID,
     references: {
-        model: 'groups',
+        model: 'Groups',
         key: 'id'
     },
     allowNull: false,
@@ -19,7 +19,7 @@ const GroupMember = sequelize.define("GroupMember", {
   user_id: {
     type: DataTypes.UUID,
     references: {
-        model: 'users',
+        model: 'Users',
         key: 'id'
     },
     allowNull: false,
@@ -28,6 +28,9 @@ const GroupMember = sequelize.define("GroupMember", {
     type: DataTypes.STRING,
     allowNull: true
   }
-});
+}, {
+        tableName: 'GroupMembers',
+        timestamps: true,
+    });
 
 module.exports = GroupMember;
