@@ -8,7 +8,7 @@ User.hasMany(Food, { foreignKey: "user_id" });
 Food.belongsTo(User, { foreignKey: "user_id" });
 
 User.hasMany(Claim, { foreignKey: "claimant_id" });
-Claim.belongsTo(User, { foreignKey: "claimant_id" });
+Claim.belongsTo(User, { foreignKey: "claimant_id", as: "claimant" });
 
 Food.hasMany(Claim, { foreignKey: "food_id" });
 Claim.belongsTo(Food, { foreignKey: "food_id" });
