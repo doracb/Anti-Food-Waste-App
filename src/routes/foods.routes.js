@@ -6,7 +6,7 @@ router.post("/", foodController.createFood);
 
 router.get("/user/:user_id", foodController.getUserFoods);
 
-router.get("/user/:userId/expiring", foodController.getExpiringFoods);
+router.get("/user/:user_id/expiring", foodController.getExpiringFoods);
 
 router.get("/city/:city", foodController.getAvailableInCity);
 

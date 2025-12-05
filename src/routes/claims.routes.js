@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const claimsController = require('../controllers/claims.controller');
+const claimsController = require('../controllers/claim.controller');
 
 router.post('/', claimsController.createClaim);
 router.get('/user/:userId', claimsController.getUserClaims);
