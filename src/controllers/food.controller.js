@@ -37,9 +37,9 @@ exports.createFood = async (req, res) => {
 
 exports.getUserFoods = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const { user_id } = req.params;
     const foods = await Food.findAll({
-      where: { user_id: userId },
+      where: { user_id },
       order: [["createdAt", "DESC"]],
     });
     return res.status(200).json(foods);
@@ -51,7 +51,7 @@ exports.getUserFoods = async (req, res) => {
 
 exports.getAvailableInCity = async (req, res) => {
   try {
-    const user_city = req.params.city;
+    const { user_city } = req.params;
     const foods = await Food.findAll({
       where: {
         is_available: true,
@@ -122,7 +122,7 @@ exports.markAsAvailable = async (req, res) => {
 
 exports.getExpiringFoods = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const { user_id } = req.params;
 
     const today = new Date();
     const threeDaysFromNow = new Date();
@@ -130,7 +130,7 @@ exports.getExpiringFoods = async (req, res) => {
 
     const foods = await Food.findAll({
       where: {
-        user_id: userId,
+        user_id,
         expiration_date: {
           [Op.between]: [today, threeDaysFromNow],
         },
