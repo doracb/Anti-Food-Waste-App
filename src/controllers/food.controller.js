@@ -51,7 +51,7 @@ exports.getUserFoods = async (req, res) => {
 
 exports.getAvailableInCity = async (req, res) => {
   try {
-    const { user_city } = req.params;
+    const { city } = req.params;
     const foods = await Food.findAll({
       where: {
         is_available: true,
@@ -59,7 +59,7 @@ exports.getAvailableInCity = async (req, res) => {
       include: [
         {
           model: User,
-          where: { city: user_city },
+          where: { city },
           attributes: ["id", "name", "username", "city"],
         },
       ],
@@ -77,6 +77,11 @@ exports.updateFood = async (req, res) => {
     if (!food) {
       return res.status(404).json({ message: "Food item not found" });
     }
+
+    if (req.body.quantity_value !== null && req.body.quantity_value < 0.1) {
+      return res.status(400).json({ message: "Quantity must be >= 0.1" });
+    }
+
     await food.update({
       name: req.body.name ?? food.name,
       category: req.body.category ?? food.category,
@@ -111,6 +116,11 @@ exports.markAsAvailable = async (req, res) => {
     if (!food) {
       return res.status(404).json({ message: "Food item not found" });
     }
+
+    if (food.user_id !== req.body.user_id) {
+      return res.status(401).json({ message: "Not your food" });
+    }
+
     food.is_available = true;
     await food.save();
     return res.status(200).json({ message: "Food item marked as available" });

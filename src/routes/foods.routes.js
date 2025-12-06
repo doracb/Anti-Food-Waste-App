@@ -4,9 +4,9 @@ const foodController = require("../controllers/food.controller");
 
 router.post("/", foodController.createFood);
 
-router.get("/user/:user_id", foodController.getUserFoods);
-
 router.get("/user/:user_id/expiring", foodController.getExpiringFoods);
+
+router.get("/user/:user_id", foodController.getUserFoods);
 
 router.get("/city/:city", foodController.getAvailableInCity);
 
