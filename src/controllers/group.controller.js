@@ -33,9 +33,9 @@ exports.createGroup = async (req, res) => {
 
 exports.getGroupById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { group_id } = req.params;
 
-        const group = await Group.findByPk(id, {
+        const group = await Group.findByPk(group_id, {
             include: [
                 {
                     model: User,
@@ -56,7 +56,7 @@ exports.getGroupById = async (req, res) => {
 
 exports.addMember = async (req, res) => {
     try {
-        const { id: group_id } = req.params;
+        const { group_id } = req.params;
 
         const { user_id, tag } = req.body;
 
