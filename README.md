@@ -47,6 +47,42 @@ Proiectul este împărțit în două mari componente: frontend și backend.
 
 _________________________________________________________________________________________________________________________________________
 
+
+Instrucțiuni de rulare:
+Înainte de a rula backend-ul sunt necesare:
+• Node.js;
+• PostgreSQL;
+• O bază de date creată numită foodShare;
+• Un user PostgreSQL pentru a accesa baza de date (ex. user: postgres, parolă: parola_ta);
+• Git pentru clonare;
+
+1. Clonează repository-ul: git clone https://github.com/doracb/Anti-Food-Waste-App.git
+
+2. Instalează dependențele: npm install
+
+3. Deschide fișierul src/sequelize și setează valorile tale PostgreSQL pentru numele bazei de date, username-ul și parola aleasă.
+
+4. Pornește serverul cu "node src/app.js"
+    Opțional: dacă ai nodemon instalat, rulează "nodemon src/app.js"
+    Sau adaugă în package.json:
+        "scripts" {
+            "start": "node src/app.js",
+            "dev": "nodemon src/app.js"
+        }
+    Apoi rulează "npm start" sau "npm run dev"
+
+5. Accesează API-ul:
+    Serverul va porni implicit pe "http://localhost:3000/api". Ar trebui să primești: { message: "FoodShare API is running..."}
+
+6. Testare API cu Postman sau Thunder Client
+    Poți testa endpoint-urile disponibile:
+        • Users;
+        • Foods;
+        • Groups;
+        • Claims;
+
+_________________________________________________________________________________________________________________________________________
+
 #EN
 _________________________________________________________________________________________________________________________________________
 
@@ -89,4 +125,41 @@ The project is divided into two major components: frontend and backend.
         o SQL relational database – PostgreSQL;
     • Deploy:
         o Azure;
+
+_________________________________________________________________________________________________________________________________________
+
+
+Running instructions:
+Before running the backend you need:
+• Node.js;
+• PostgreSQL;
+• A created database called foodShare;
+• A PostgreSQL user to access the database (e.g. user: postgres, password: your_password);
+• Git for cloning;
+
+1. Clone the repository: git clone https://github.com/doracb/Anti-Food-Waste-App.git
+
+2. Install dependencies: npm install
+
+3. Open the src/sequelize file and set your PostgreSQL values ​​for the database name, username, and chosen password.
+
+4. Start the server with "node src/app.js"
+    Optional: if you have nodemon installed, run "nodemon src/app.js"
+    Or add to package.json:
+        "scripts" {
+        "start": "node src/app.js",
+        "dev": "nodemon src/app.js"
+    }
+    Then run "npm start" or "npm run dev"
+
+5. Access the API:
+    The server will start by default on "http://localhost:3000/api". You should get: { message: "FoodShare API is running..."}
+
+6. Test the API with Postman or Thunder Client:
+    You can test the available endpoints:
+        • Users;
+        • Foods;
+        • Groups;
+        • Claims;
+
 _________________________________________________________________________________________________________________________________________
