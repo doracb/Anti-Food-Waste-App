@@ -13,7 +13,10 @@ Claim.belongsTo(User, { foreignKey: 'claimant_id', as: 'claimant' });
 Food.hasMany(Claim, { foreignKey: 'food_id' });
 Claim.belongsTo(Food, { foreignKey: 'food_id' });
 
-User.belongsToMany(Group, { through: 'GroupMember', foreignKey: 'user_id' });
-Group.belongsToMany(User, { through: 'GroupMember', foreignKey: 'group_id' });
+User.belongsToMany(Group, { through: GroupMember, foreignKey: 'user_id' });
+Group.belongsToMany(User, { as:'members', through: GroupMember, foreignKey: 'group_id' });
+
+GroupMember.belongsTo(User, { foreignKey: 'user_id' });
+GroupMember.belongsTo(Group, { foreignKey: 'group_id' });
 
 module.exports = { User, Food, Group, Claim, GroupMember };   
