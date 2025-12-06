@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.json({ message: "API is running..."});
+    res.json({ message: "FoodShare API is running..."});
 });
 
 app.use("/api", routes);
