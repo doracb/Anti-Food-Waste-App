@@ -26,6 +26,7 @@ exports.createGroup = async (req, res) => {
 
         res.status(201).json(group);
     } catch (err) {
+        console.log(err);
         res.status(400).json({ error: err.message });
     }
 };
@@ -48,6 +49,7 @@ exports.getGroupById = async (req, res) => {
 
         res.json(group);
     } catch (err) {
+        console.log(err);
         res.status(400).json({ error: err.message });
     }
 };
@@ -69,7 +71,7 @@ exports.addMember = async (req, res) => {
             }
         });
 
-        if(existingMember) {
+        if (existingMember) {
             return res.status(400).json({ message: 'User is already a member of the group' });
         }
 
@@ -81,6 +83,7 @@ exports.addMember = async (req, res) => {
 
         res.status(201).json(member);
     } catch (err) {
+        console.log(err);
         res.status(400).json({ error: err.message });
     }
 };
@@ -110,11 +113,12 @@ exports.updateTag = async (req, res) => {
 
         res.json(member);
     } catch (err) {
+        console.log(err);
         res.status(400).json({ error: err.message });
     }
 };
 
-exports.getGroupMember = async (req, res) => {
+exports.getGroupMembers = async (req, res) => {
     try {
         const { group_id } = req.params;
         const members = await GroupMember.findAll({
@@ -124,6 +128,7 @@ exports.getGroupMember = async (req, res) => {
 
         res.json(members);
     } catch (err) {
+        console.log(err);
         res.status(400).json({ error: err.message });
     }
 };
@@ -142,6 +147,105 @@ exports.getUserGroups = async (req, res) => {
 
         res.json(groups);
     } catch (err) {
+        console.log(err);
+        res.status(400).json({ error: err.message });
+    }
+};
+
+exports.transferOwnership = async (req, res) => {
+    try {
+        const { group_id } = req.params;
+        const { old_owner_id, new_owner_id } = req.body;
+
+        const group = await Group.findByPk(group_id);
+        if (!group) {
+            return res.status(404).json({ message: "Group not found" });
+        }
+
+        if (group.owner_id !== old_owner_id) {
+            return res.status(403).json({ message: "Only the current group owner can transfer ownership" });
+        }
+
+        const newOwnerMember = await GroupMember.findOne({
+            where: {
+                group_id,
+                user_id: new_owner_id
+            }
+        });
+
+        if (!newOwnerMember) {
+            return res.status(400).json({ message: "New owner must be a member of the group" });
+        }
+
+        group.owner_id = new_owner_id;
+        await group.save();
+
+        return res.status(200).json({ message: "Ownership transferred successfully", group });
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({ error: err.message });
+    }
+};
+
+exports.leaveGroup = async (req, res) => {
+    try {
+        const {group_id} = req.params;
+        const {user_id} = req.body;
+
+        const group = await Group.findByPk(group_id);
+        if (!group) {
+            return res.status(404).json({ message: "Group not found" });
+        }
+
+        const members = await GroupMember.findAll({
+             where: { group_id: group.id },
+             order: [['createdAt', 'ASC']]
+        });
+
+        const isOwner = group.owner_id === user_id;
+
+        if (members.length === 1 && isOwner) {
+            await GroupMember.destroy({ where: { group_id: group.id } });
+            await group.destroy();
+            return res.status(200).json({ message: "Group deleted -  the last member has left" });
+        }
+
+        if (isOwner) {
+            const otherMembers = members.filter(m => m.user_id !== user_id);
+            const newOwner = otherMembers[0];
+            group.owner_id = newOwner.user_id;
+            await group.save();
+        }
+
+        await GroupMember.destroy({ where: { group_id, user_id } });
+
+        res.status(204).send();
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({ error: err.message });
+    }
+};
+
+exports.deleteGroup = async (req, res) => {
+    try {
+        const { group_id } = req.params;
+        const { owner_id } = req.body;
+
+        const group = await Group.findByPk(group_id);
+        if (!group) {
+            return res.status(404).json({ message: "Group not found" });
+        }
+
+        if(group.owner_id !== owner_id) {
+            return res.status(403).json({ message: "Only the group owner can delete the group" });
+        }
+
+        await GroupMember.destroy({ where: { group_id } });
+        await group.destroy();
+
+        return res.status(204).send();
+    } catch (err) {
+        console.log(err);
         res.status(400).json({ error: err.message });
     }
 };
