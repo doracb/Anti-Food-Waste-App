@@ -112,12 +112,18 @@ exports.deleteFood = async (req, res) => {
 
 exports.markAsAvailable = async (req, res) => {
   try {
-    const food = await Food.findByPk(req.params.id);
+    const{ id, user_id } = req.params; 
+    
+    const food = await Food.findByPk(id);
     if (!food) {
       return res.status(404).json({ message: "Food item not found" });
     }
 
-    if (food.user_id !== req.body.user_id) {
+    if (!user_id) {
+      return res.status(400).json({ message: "user_id is mandatory" });
+    }
+
+    if (food.user_id !== user_id) {
       return res.status(401).json({ message: "Not your food" });
     }
 

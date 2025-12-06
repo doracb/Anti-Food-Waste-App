@@ -10,7 +10,7 @@ router.get("/user/:user_id", foodController.getUserFoods);
 
 router.get("/city/:city", foodController.getAvailableInCity);
 
-router.patch("/:id/available", foodController.markAsAvailable);
+router.patch("/:id/available/:user_id", foodController.markAsAvailable);
 
 router.put("/:id", foodController.updateFood);
 
