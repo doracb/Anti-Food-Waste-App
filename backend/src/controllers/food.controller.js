@@ -158,3 +158,15 @@ exports.getExpiringFoods = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+exports.getFoodById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const food = await Food.findByPk(id, { include: 'User'});
+    if (!food) return res.status(404).json({ message: "Food item not found" });
+    return res.status(200).json(food)
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

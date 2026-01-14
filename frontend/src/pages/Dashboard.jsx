@@ -156,7 +156,7 @@ export default function Dashboard() {
                 </form>
             </div>
             {loading ? <p>Se încarcă frigiderul...</p> : (
-                    <div style={styles.grid}>
+                    <div style={styles.cardContainer}>
                         {foods.length === 0 && <p>Frigiderul este gol. Adaugă primele produse!</p>}
 
                         {foods.map((food) => {
@@ -220,20 +220,23 @@ const styles = {
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
     },
     form: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+        display: 'flex',
+        flexWrap: 'wrap',
         gap: '15px',
-        alignItems: 'end'
+        alignItems: 'flex-end'
     },
     inputGroup: {
         display: 'flex',
         flexDirection: 'column',
-        gap: '15px'
+        gap: '5px', 
+        flex: '1 1 150px'
     },
     input: {
-        padding: '8px',
+        padding: '10px',
         borderRadius: '4px',
-        border: '1px solid #ccc'
+        border: '1px solid #ccc',
+        width: '100%',
+        boxSizing: 'border-box'
     },
     addButton: {
         padding: '10px',
@@ -242,12 +245,15 @@ const styles = {
         border: 'none',
         borderRadius: '4px',
         cursor: 'pointer',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        heihgt: '40px',
+        width: '100%'
     },
-    grid: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '20px',
+    cardContainer: {
+        display: 'flex',       
+        flexWrap: 'wrap',      
+        gap: '20px',           
+        justifyContent: 'flex-start', 
     },
     card: {
         border: '1px solid #eee',
@@ -256,7 +262,11 @@ const styles = {
         boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+
+        flex: '1 1 280px',
+        maxWidth: '350px',
+        maxHeight: '250px'
     },
     cardHeader: {
         display: 'flex',
@@ -266,21 +276,25 @@ const styles = {
     categoryTag: {
         fontSize: '0.8em',
         backgroundColor: '#e9ecef',
-        padding: '2px 6px',
-        borderRadius: '4px'
+        padding: '4px 8px',
+        borderRadius: '15px',
+        fontWeight: 'bold',
+        color: '#555'
     },
     sharedTag: {
         fontSize: '0.8em',
         backgroundColor: '#d4edda',
         color: '#155724',
-        padding: '2px 6px',
-        borderRadius: '4px'
+        padding: '4px 8px',
+        borderRadius: '15px',
+        fontWeight: 'bold'
     },
     actions: {
         marginTop: '15px',
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        gap: '10px'
     },
     shareButton: {
         backgroundColor: '#007bff',
@@ -288,7 +302,8 @@ const styles = {
         border: 'none',
         padding: '5px 10px',
         borderRadius: '4px',
-        cursor : 'pointer'
+        cursor: 'pointer',
+        flex: 1
     },
     deleteButton: {
         backgroundColor: '#dc3545',

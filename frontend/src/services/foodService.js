@@ -55,6 +55,12 @@ export const shareFood = async (foodId) => {
 
 export const getCityFoods = async (city) => {
     const response = await fetch(`/api/foods/city/${city}`);
-    if (!response.ok) throw new Error("Nu s-au putut încărca produsele."); 
+    if (!response.ok) throw new Error("Eroare la încărcarea produselor."); 
+    return await response.json();
+};
+
+export const getFoodById = async (id) => {
+    const response = await fetch(`/api/foods/${id}`);
+    if (!response.ok) throw new Error("Eroare la încărcarea detaliilor produsului.");
     return await response.json();
 };
