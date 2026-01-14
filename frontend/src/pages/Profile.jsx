@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaUserCircle, FaMapMarkerAlt, FaSave, FaCalendarAlt } from 'react-icons/fa';
 import { getUserProfile, updateUserProfile } from '../services/userService';
-import { getCurrentUserId } from '../services/authService';
+import { getCurrentUserId, setUser } from '../services/authService';
 
 export default function Profile() {
     const { id } = useParams();
@@ -11,7 +11,7 @@ export default function Profile() {
     const profileId = id || currentUserId;
     const isMyProfile = profileId === currentUserId;
 
-    const [user, setUser] = useState(null);
+    const [user, setUserData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({ name: '', city: '' });
 
@@ -20,7 +20,7 @@ export default function Profile() {
     const loadProfile = async () => {
         try {
             const data = await getUserProfile(profileId);
-            setUser(data);
+            setUserData(data);
             setFormData({ name: data.name, city: data.city });
         } catch (error) {
             alert(error.message);
@@ -29,10 +29,17 @@ export default function Profile() {
 
     const handleUpdate = async () => {
         try {
-            await updateUserProfile(formData);
+            const updatedUser = await updateUserProfile(formData);
+
+            if (isMyProfile) {
+                const newLocalStorageUser = { ...user, ...formData };
+                setUser(newLocalStorageUser);
+            }
+
             setIsEditing(false);
             loadProfile();
             alert('Profil actualizat!');
+            window.location.reload();
         } catch (error) {
             alert(error.message);
         }

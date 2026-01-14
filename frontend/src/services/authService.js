@@ -1,4 +1,4 @@
-const setUser = (user) => {
+export const setUser = (user) => {
     localStorage.setItem('currentUser', JSON.stringify(user));
 };
 
@@ -36,7 +36,6 @@ export const registerUser = async (userData) => {
     return await response.json();
 }
 
-// pentru login
 export const loginUser = async (email, password) => {
     const response = await fetch('/api/users/login', {
         method: 'POST',
