@@ -20,4 +20,6 @@ router.get("/:group_id", groupController.getGroupById);
 
 router.delete("/:group_id", groupController.deleteGroup);
 
+router.get("/:group_id/foods", groupController.getGroupFoods);
+
 module.exports = router;

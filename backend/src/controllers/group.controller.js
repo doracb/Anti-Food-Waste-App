@@ -1,4 +1,5 @@
-const { Group, GroupMember, User } = require('../models')
+const { Group, GroupMember, User, Food } = require('../models');
+const { Op } = require('sequelize');
 
 exports.createGroup = async (req, res) => {
     try {
@@ -244,6 +245,42 @@ exports.deleteGroup = async (req, res) => {
         await group.destroy();
 
         return res.status(204).send();
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({ error: err.message });
+    }
+};
+
+exports.getGroupFoods = async (req, res) => {
+    try {
+        const { group_id } = req.params;
+
+        const members = await GroupMember.findAll({
+            where: { group_id },
+            attributes: ['user_id'] 
+        });
+
+        if (!members.length) {
+            return res.json([]);
+        }
+
+        const memberIds = members.map(m => m.user_id);
+
+        const foods = await Food.findAll({
+            where: {
+                user_id: { [Op.in]: memberIds },
+                is_available: true  
+            },
+            include: [
+                {
+                    model: User,
+                    attributes: ['id', 'username', 'city']
+                }
+            ],
+            order: [['expiration_date', 'ASC']]
+        });
+
+        res.json(foods);
     } catch (err) {
         console.log(err);
         res.status(400).json({ error: err.message });

@@ -11,7 +11,7 @@ const findUserByEmail = async (email) => {
     }
     const user = await response.json();
     return user.id;
-}
+};
 
 export const createGroup = async (groupName) => {
     const ownerId = getCurrentUserId();
@@ -24,7 +24,7 @@ export const createGroup = async (groupName) => {
         throw new Error('Eroare la crearea grupului');
     }
     return await response.json();
-}
+};
 
 export const getUserGroups = async () => {
     const userId = getCurrentUserId();
@@ -35,7 +35,7 @@ export const getUserGroups = async () => {
         throw new Error('Eroare la preluarea grupurilor');
     }
     return await response.json();
-}
+};
 
 export const addMemberByEmail = async (groupId, email) => {
     try {
@@ -53,4 +53,46 @@ export const addMemberByEmail = async (groupId, email) => {
     } catch (error) {
         throw (error);
     }
-}
+};
+
+export const getGroupDetails = async (groupId) => {
+    const response = await fetch(`/api/groups/${groupId}`, {
+        headers: getHeaders()
+    });
+    if (!response.ok) throw new Error('Nu am putut încărca grupul');
+    return await response.json();
+};
+
+export const updateMemberTag = async (groupId, userId, newTag) => {
+    const response = await fetch(`/api/groups/${groupId}/members/${userId}/tag`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify({ tag: newTag })
+    });
+    if (!response.ok) throw new Error('Eroare la actualizarea etichetei');
+    return await response.json();
+};
+
+export const leaveGroup = async (groupId) => {
+    const userId = getCurrentUserId();
+    const response = await fetch(`/api/groups/${groupId}/leave`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ user_id: userId })
+    });
+
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Eroare la părăsirea grupului');
+    }
+
+    return true;
+};
+
+export const getGroupFoods = async (groupId) => {
+    const response = await fetch(`/api/groups/${groupId}/foods`, {
+        headers: getHeaders()
+    });
+    if (!response.ok) throw new Error('Nu am putut încărca alimentele grupului');
+    return await response.json();
+};

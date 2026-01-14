@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { getCurrentUserId } from '../services/authService';
 import { getUserGroups, createGroup, addMemberByEmail } from '../services/groupService';
-import { FaUsers, FaPlus, FaUserPlus, FaTrash } from 'react-icons/fa';
-import { MdOutlineFoodBank } from "react-icons/md";
+import { FaUsers, FaPlus, FaUserPlus } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 export default function Group() {
     const [groups, setGroups] = useState([]);
@@ -86,6 +86,15 @@ export default function Group() {
                                 <p style={{ color: '#666', fontSize: '12px', margin: 0 }}>Creat de ID: ...{group.owner_id.slice(-4)}</p>
                             </div>
                         </div>
+                        <Link to={`/group/${group.id}`}>
+                            <button style={{
+                                background: '#6c757d', color: 'white', border: 'none',
+                                padding: '8px 15px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold',
+                                marginTop: '15px'
+                            }}>
+                                Vezi Detalii & Membri
+                            </button>
+                        </Link>
                         <div style={{ marginTop: '15px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
                             <p style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
                                 <FaUserPlus color="#666" /> Invită un prieten:

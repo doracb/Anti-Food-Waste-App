@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Group from './pages/Group';
+import GroupDetails from './pages/GroupDetails';
 import Marketplace from './pages/Marketplace';
 import Profile from './pages/Profile';
 import FoodDetails from './pages/FoodDetails';
@@ -55,8 +56,8 @@ function App() {
           element={isAuthenticated ? <Group /> : <Navigate to="/login" />}
         />
         <Route
-          path="/groups/:id"
-          element={isAuthenticated ? <Group /> : <Navigate to="/login" />}
+          path="/group/:id"
+          element={isAuthenticated ? <GroupDetails /> : <Navigate to="/login" />}
         />
         <Route
           path="/claims"
