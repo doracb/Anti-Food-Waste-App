@@ -23,7 +23,7 @@ export default function MarketPlace() {
         }
     };
 
-    useEffect( () => {
+    useEffect(() => {
         if (user && user.city) loadMarketPlace();
         else {
             setLoading(false);
@@ -31,9 +31,8 @@ export default function MarketPlace() {
         }
     }, []);
 
-    const filteredFoods = foods.filter(food => 
-        food.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        food.category.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredFoods = foods.filter(food =>
+        (food.name.toLowerCase().includes(searchTerm.toLowerCase()) || food.category.toLowerCase().includes(searchTerm.toLowerCase())) && food.user_id !== user.id
     );
 
     const getDaysUntilExpiration = (dateString) => {
@@ -44,26 +43,26 @@ export default function MarketPlace() {
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     };
 
-    if (!user) return <div style={{padding: '20px'}}>Autentificare necesară!</div>
+    if (!user) return <div style={{ padding: '20px' }}>Autentificare necesară!</div>
 
     return (
-        <div style={{maxWidth: '1000px', margin: '0 auto', padding: '20px'}}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px' }}>
             <div style={styles.header}>
                 <h1>Marketplace - {user.city}</h1>
                 <p>Vezi ce alimente sunt disponibile în orașul tău</p>
             </div>
 
-            <div style={{marginBottom: '20px'}}>
-                <input 
-                type="text"
-                placeholder="Caută produse (ex. lactate...)" 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={styles.searchBar}
+            <div style={{ marginBottom: '20px' }}>
+                <input
+                    type="text"
+                    placeholder="Caută produse (ex. lactate...)"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={styles.searchBar}
                 />
             </div>
 
-            {error && <p style={{color: 'red'}}>{error}</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
 
             {loading ? <p>Căutam produse în apropiere...</p> : (
                 <div style={styles.grid}>
@@ -76,7 +75,7 @@ export default function MarketPlace() {
                         const ownerName = food.User ? (food.User.name || food.User.username) : "Necunoscut";
 
                         return (
-                            <div key={food.id} style = {styles.card}>
+                            <div key={food.id} style={styles.card}>
                                 <div style={styles.cardHeader}>
                                     <span style={styles.categoryTag}>{food.category}</span>
                                     <span style={styles.ownerTag}>{ownerName}</span>
@@ -84,9 +83,9 @@ export default function MarketPlace() {
 
                                 <h3>{food.name}</h3>
 
-                                <div style={{margin: '10px 0'}}>
+                                <div style={{ margin: '10px 0' }}>
                                     <p>Cantitate: <strong>{food.quantity_value} {food.quantity_unit}</strong></p>
-                                    <p style={{color: daysLeft <= 3 ? '#d9534f' : '#333'}}>
+                                    <p style={{ color: daysLeft <= 3 ? '#d9534f' : '#333' }}>
                                         Expiră în {daysLeft} zile
                                     </p>
                                 </div>

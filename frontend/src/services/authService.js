@@ -37,7 +37,7 @@ export const registerUser = async (userData) => {
 }
 
 // pentru login
-export const loginUser = async (ElementInternals, password) => {
+export const loginUser = async (email, password) => {
     const response = await fetch('/api/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

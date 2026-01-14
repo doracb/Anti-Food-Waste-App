@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getCurrentUser } from '../services/authService';
 import { getUsersInCity } from '../services/userService';
-import { FaCity, FaUser } from 'react-icons/fa';
+import { FaCity, FaUserCircle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 export default function CityUsers() {
@@ -29,7 +29,7 @@ export default function CityUsers() {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px' }}>
             <h1>
                 <FaCity color="#6f42c1" style={{ marginRight: '10px' }} />
                 Comunitatea din {myCity}

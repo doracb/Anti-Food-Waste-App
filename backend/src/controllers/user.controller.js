@@ -1,8 +1,20 @@
 const { User, Group, Claim, Food, GroupMember } = require('../models');
 const { Op } = require('sequelize')
 
+const normalizeCity = (city) => {
+    if (!city) return null;
+    return city
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .toLowerCase()
+        .replace(/\b\w/g, c => c.toUpperCase());
+};
+
 exports.register = async (req, res) => {
     try {
+        if (req.body.city) {
+            req.body.city = normalizeCity(req.body.city);
+        }
         const user = await User.create(req.body);
 
         res.status(201).json(user);
@@ -50,6 +62,10 @@ exports.updateProfile = async (req, res) => {
 
         if (!user) return res.status(404).json({ message: 'User not found' });
 
+        if (req.body.city) {
+            req.body.city = normalizeCity(req.body.city);
+        }
+
         await user.update(req.body);
 
         res.json(user);
@@ -60,7 +76,11 @@ exports.updateProfile = async (req, res) => {
 
 exports.getUsersInCity = async (req, res) => {
     try {
-        const { city } = req.params;
+        let { city } = req.params;
+
+        if (city) {
+            city = normalizeCity(city);
+        }
 
         const users = await User.findAll({
             where: { city }

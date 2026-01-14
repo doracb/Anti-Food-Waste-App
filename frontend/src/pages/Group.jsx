@@ -56,7 +56,7 @@ export default function Group() {
     }
 
     return (
-        <div style={{ padding: '20px' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px' }}>
             <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#333' }}>
                 <FaUsers size={36} color="#007bff" /> Grupurile Mele
             </h1>
