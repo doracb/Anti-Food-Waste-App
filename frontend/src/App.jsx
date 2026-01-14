@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { getCurrentUser } from './services/authService';
 import './App.css';
 
 import Landing from './pages/Landing';
@@ -11,12 +12,15 @@ import Profile from './pages/Profile';
 import FoodDetails from './pages/FoodDetails';
 import Claims from './pages/Claims';
 import CityUsers from './pages/CityUsers';
+import Navbar from './components/layout/Navbar';
 
 function App() {
-  const isAuthenticated = true;
+  const user = getCurrentUser();
+  const isAuthenticated = !!user;
 
   return (
     <>
+      {isAuthenticated && <Navbar />}
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/landing" element={<Landing />} />
