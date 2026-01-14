@@ -1,5 +1,12 @@
 const { User, Group, Claim, Food, GroupMember } = require('../models');
-const { Op } = require('sequelize')
+const { Op } = require('sequelize');
+const jwt = require('jsonwebtoken');
+
+const generateToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: '30d',
+    });
+};
 
 const normalizeCity = (city) => {
     if (!city) return null;
@@ -17,7 +24,9 @@ exports.register = async (req, res) => {
         }
         const user = await User.create(req.body);
 
-        res.status(201).json(user);
+        const token = generateToken(user.id);
+
+        res.status(201).json({ ...user.toJSON(), token });
 
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -34,7 +43,9 @@ exports.login = async (req, res) => {
 
         if (!user || user.password !== password) return res.status(401).json({ message: 'Invalid credentials' });
 
-        return res.json(user);
+        const token = generateToken(user.id);
+
+        res.json({ ...user.toJSON(), token });
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
