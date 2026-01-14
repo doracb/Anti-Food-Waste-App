@@ -1,3 +1,5 @@
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000');
+
 export const setUser = (user) => {
     localStorage.setItem('currentUser', JSON.stringify(user));
 };
@@ -12,7 +14,7 @@ export const getCurrentUser = () => {
 
 export const logout = () => {
     localStorage.removeItem('currentUser');
-    window.location.href
+    window.location.href = '/login';
 }
 
 export const getCurrentUserId = () => {
@@ -20,9 +22,8 @@ export const getCurrentUserId = () => {
     return user ? user.id : null;
 }
 
-// partea de register
 export const registerUser = async (userData) => {
-    const response = await fetch('/api/users/register', {
+    const response = await fetch(`${API_URL}/api/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
@@ -33,11 +34,17 @@ export const registerUser = async (userData) => {
         throw new Error(errorData.message || errorData.error || 'Eroare de înregistrare');
     }
 
-    return await response.json();
+    const data = await response.json();
+
+    if (data.token) {
+        setUser(data);
+    }
+
+    return data;
 }
 
 export const loginUser = async (email, password) => {
-    const response = await fetch('/api/users/login', {
+    const response = await fetch(`${API_URL}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -50,7 +57,7 @@ export const loginUser = async (email, password) => {
 
     const user = await response.json();
 
-    if (user && user.id) {
+    if (user && user.token) {
         setUser(user);
     }
 

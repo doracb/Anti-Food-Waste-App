@@ -1,15 +1,30 @@
-import {getCurrentUserId} from './authService';
+import { getCurrentUserId, getCurrentUser } from './authService';
 
-const getHeaders = () => ({
-    "Content-Type": "application/json",
-});
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000');
+
+const getAuthHeaders = () => {
+    const user = getCurrentUser();
+    const headers = {
+        "Content-Type": "application/json",
+    };
+
+    if (user && user.token) {
+        headers["Authorization"] = `Bearer ${user.token}`;
+    }
+
+    return headers;
+};
 
 export const getMyFoods = async () => {
-    const userId = getCurrentUserId();
-    if (!userId) {
+    const user = getCurrentUser();
+    if (!user || !user.id) {
         throw new Error("User neautentificat!");
     }
-    const response = await fetch(`/api/foods/user/${userId}`);
+
+    const response = await fetch(`${API_URL}/api/foods/user/${user.id}`, {
+        headers: getAuthHeaders()
+    });
+
     if (!response.ok) {
         throw new Error("Eroare la preluarea produselor.");
     }
@@ -17,19 +32,22 @@ export const getMyFoods = async () => {
 };
 
 export const addFood = async (foodData) => { 
-    const userId = getCurrentUserId();
-    if (!userId) {
+    const user = getCurrentUser();
+    if (!user || !user.id) {
         throw new Error("User neautentificat!");
     }
+
     const payload = {
         ...foodData,
-        user_id: userId, 
+        user_id: user.id, 
     };
-    const response = await fetch(`/api/foods`, {
+
+    const response = await fetch(`${API_URL}/api/foods`, {
         method: 'POST',
-        headers: getHeaders(),
+        headers: getAuthHeaders(),
         body: JSON.stringify(payload),
     });
+
     if (!response.ok) {
         const err = await response.json();
         throw new Error(err.message || "Eroare la adăugarea produsului.");
@@ -38,29 +56,39 @@ export const addFood = async (foodData) => {
 };
 
 export const deleteFood = async (foodId) => {
-    const response = await fetch(`/api/foods/${foodId}`, {
+    const response = await fetch(`${API_URL}/api/foods/${foodId}`, {
         method: 'DELETE',
+        headers: getAuthHeaders()
     }); 
+    
     if (!response.ok) throw new Error("Eroare la ștergerea produsului."); 
 };
 
 export const shareFood = async (foodId) => {
-    const userId = getCurrentUserId();
-    const response = await fetch(`/api/foods/${foodId}/available/${userId}`, {
+    const user = getCurrentUser();
+    const response = await fetch(`${API_URL}/api/foods/${foodId}/available/${user.id}`, {
         method: 'PATCH',
+        headers: getAuthHeaders()
     });
+
     if (!response.ok) throw new Error("Eroare la partajarea produsului.");
     return await response.json();
 };
 
 export const getCityFoods = async (city) => {
-    const response = await fetch(`/api/foods/city/${city}`);
+    const response = await fetch(`${API_URL}/api/foods/city/${city}`, {
+        headers: { "Content-Type": "application/json" } 
+    });
+
     if (!response.ok) throw new Error("Eroare la încărcarea produselor."); 
     return await response.json();
 };
 
 export const getFoodById = async (id) => {
-    const response = await fetch(`/api/foods/${id}`);
+    const response = await fetch(`${API_URL}/api/foods/${id}`, {
+        headers: { "Content-Type": "application/json" }
+    });
+
     if (!response.ok) throw new Error("Eroare la încărcarea detaliilor produsului.");
     return await response.json();
 };
