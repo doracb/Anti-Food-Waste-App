@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import { getMyFoods, addFood, deleteFood, shareFood } from '../services/foodService';
 import { getCurrentUser } from '../services/authService';
+import { FaTrash, FaShareAlt, FaCheckCircle } from 'react-icons/fa';
 
 export default function Dashboard() {
     const [foods, setFoods] = useState([]);
@@ -98,114 +99,138 @@ export default function Dashboard() {
     }
 
     return (
-        <div style={{maxWidth: '1000px', margin: '0 auto', padding: '20px'}}>
+        <div style={{maxWidth: '1200px', margin: '0 auto', padding: '20px'}}>
             <h1>Frigiderul lui {user.name || user.username}</h1>
+            
             <div style={styles.formContainer}>
-                <h3>Adaugă un produs nou</h3>
+                <h3 style={{marginTop: 0, marginBottom: '15px'}}>Adaugă un produs nou</h3>
                 <form onSubmit={handleAddSubmit} style={styles.form}>
                     <div style={styles.inputGroup}>
-                        <label>Nume Produs</label>
+                        <label style={styles.label}>Nume Produs</label>
                         <input type="text" name="name" 
-                    placeholder="Nume produs (ex: Iaurt cu fructe)" 
-                    value={formData.name} 
-                    onChange={handleChange} 
-                    required style={styles.input} />
+                            placeholder="ex: Iaurt" 
+                            value={formData.name} 
+                            onChange={handleChange} 
+                            required style={styles.input} 
+                        />
                     </div>
+                    
                     <div style={styles.inputGroup}>
-                        <label>Categoria</label>
+                        <label style={styles.label}>Categoria</label>
                         <select name="category" 
-                        value={formData.category} 
-                        onChange={handleChange} 
-                        style={styles.input}>
+                            value={formData.category} 
+                            onChange={handleChange} 
+                            style={styles.input}>
                             <option value="General">General</option>
                             <option value="Lactate">Lactate</option>
                             <option value="Legume">Legume</option>
                             <option value="Fructe">Fructe</option>
                             <option value="Carne">Carne</option>
-                            <option value="Bauturi">Panificație</option>
+                            <option value="Panificație">Panificație</option>
                             <option value="Dulciuri">Dulciuri</option>
+                            <option value="Băuturi">Băuturi</option>
                         </select>
                     </div>
+
                     <div style={styles.inputGroup}>
-                        <label>Expirare</label>
+                        <label style={styles.label}>Expirare</label>
                         <input type="date" name="expiration_date" 
                             value={formData.expiration_date} 
                             onChange={handleChange} 
                             required
-                            style={styles.input}/>
+                            style={styles.input}
+                        />
                     </div>
+
                     <div style={styles.inputGroup}>
-                        <label>Cantitate</label>
-                        <input type="number" 
-                            step = "0.1"
-                            name="quantity_value" 
-                            value={formData.quantity_value} 
-                            onChange={handleChange} 
-                            style={{...styles.input, flex: 1}}
-                            placeholder="Cantitate"/>
-                        <input type="text" 
-                            name="quantity_unit" 
-                            value={formData.quantity_unit} 
-                            onChange={handleChange} 
-                            style={{...styles.input, width: '60px'}}
-                            placeholder="buc"/>
+                        <label style={styles.label}>Cantitate</label>
+                        <div style={{display: 'flex', gap: '5px'}}>
+                            <input type="number" step="0.1" name="quantity_value" 
+                                value={formData.quantity_value} 
+                                onChange={handleChange} 
+                                style={{...styles.input, flex: 2}}
+                                placeholder="0"
+                            />
+                            <input type="text" name="quantity_unit" 
+                                value={formData.quantity_unit} 
+                                onChange={handleChange} 
+                                style={{...styles.input, flex: 1, minWidth: '60px'}}
+                                placeholder="buc"
+                            />
+                        </div>
                     </div>
-                    <div>
-                        <button type="submit" style={styles.addButton}>Adaugă Produs</button>
+
+                    <div style={{display: 'flex', alignItems: 'flex-end'}}>
+                         <button type="submit" style={styles.addButton}>+ Adaugă</button>
                     </div>
                 </form>
             </div>
+
             {loading ? <p>Se încarcă frigiderul...</p> : (
-                    <div style={styles.cardContainer}>
-                        {foods.length === 0 && <p>Frigiderul este gol. Adaugă primele produse!</p>}
+                <div style={styles.listContainer}>
+                    {foods.length === 0 && <p style={{textAlign: 'center', color: '#888'}}>Frigiderul este gol. Adaugă primele produse!</p>}
 
-                        {foods.map((food) => {
-                            const daysLeft = getDaysUntilExpiration(food.expiration_date);
-                            let cardBackground = '#fff';
-                            let statusText = `${daysLeft} zile`
-                            let textColor = '#333'
+                    {foods.map((food) => {
+                        const daysLeft = getDaysUntilExpiration(food.expiration_date);
+                        
+                        let statusColor = '#28a745';
+                        let statusText = `${daysLeft} zile rămase`;
+                        let bgColor = '#fff';
 
-                            if (daysLeft < 0) {
-                                cardBackground = '#ffe6e6';
-                                let statusText = 'Expirat'
-                                let textColor = 'red'
-                            } else if (daysLeft <= 3) {
-                                cardBackground = '#fff0f0';
-                                let statusText = 'Expirat'
-                                let textColor = '#d9534f'
-                            } else if (daysLeft <= 7) {
-                                cardBackground = '#fffbe6';
-                            }
+                        if (daysLeft < 0) {
+                            statusColor = '#dc3545';
+                            statusText = `EXPIRAT de ${Math.abs(daysLeft)} zile`;
+                            bgColor = '#fff5f5';
+                        } else if (daysLeft === 0) {
+                            statusColor = '#dc3545';
+                            statusText = 'Expiră AZI';
+                            bgColor = '#fff5f5';
+                        } else if (daysLeft <= 3) {
+                            statusColor = '#ffc107';
+                            statusText = `Expiră în ${daysLeft} zile`;
+                            bgColor = '#fffbf0';
+                        }
 
-                            return (
-                                <div key={food.id} style={{...styles.card, backgroundColor: cardBackground}}>
-                                    <div style={styles.cardHeader}>
-                                        <span style={styles.categoryTag}>{food.category}</span>
-                                        {food.is_available && <span style={styles.sharedTag}>Partajat Public</span>}
-                                        <h3>{food.name}</h3>
-                                        <p>Cantitate: <strong>{food.quantity_value} {food.quantity_unit}</strong></p>
-                                        <p style={{ color: textColor, fontWeight: 'bold'}}>{statusText}</p>
-
-                                        <div style={styles.actions}>
-                                        {!food.is_available && daysLeft >= 0 && (
-                                            <button onClick={() => handleShare(food.id)} style={styles.shareButton}>
-                                                Share
-                                            </button>
-                                        )}
-
-                                        {food.is_available && (
-                                            <span style={{color: 'green', fontSize: '0.9em'}}>Disponibil în oraș</span>
-                                        )}
-
-                                        <button onClick={() => handleDelete(food.id)} style={styles.deleteButton}>
-                                            Șterge
-                                        </button>
-                                        </div>
+                        return (
+                            <div key={food.id} style={{...styles.listItem, backgroundColor: bgColor}}>
+                                <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: '20px'}}>
+                                    <div style={styles.categoryBadge}>{food.category}</div>
+                                    
+                                    <div>
+                                        <h3 style={{margin: '0 0 5px 0', fontSize: '1.1rem'}}>{food.name}</h3>
+                                        <span style={{color: '#666', fontSize: '0.9rem'}}>
+                                            Cantitate: <strong>{food.quantity_value} {food.quantity_unit}</strong>
+                                        </span>
                                     </div>
                                 </div>
-                            );
-                        })}
-                    </div>
+
+                                <div style={{flex: 1, textAlign: 'center'}}>
+                                    <span style={{color: statusColor, fontWeight: 'bold', border: `1px solid ${statusColor}`, padding: '5px 10px', borderRadius: '20px', fontSize: '0.85rem'}}>
+                                        {statusText}
+                                    </span>
+                                </div>
+
+                                <div style={{flex: 1, display: 'flex', justifyContent: 'flex-end', gap: '10px', alignItems: 'center'}}>
+                                    {food.is_available ? (
+                                        <span style={{color: 'green', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '5px', background: '#e8f5e9', padding: '5px 10px', borderRadius: '5px'}}>
+                                            <FaCheckCircle /> Public
+                                        </span>
+                                    ) : (
+                                        daysLeft >= 0 && (
+                                            <button onClick={() => handleShare(food.id)} style={styles.btnShare} title="Partajează cu vecinii">
+                                                <FaShareAlt /> Share
+                                            </button>
+                                        )
+                                    )}
+
+                                    <button onClick={() => handleDelete(food.id)} style={styles.btnDelete} title="Șterge">
+                                        <FaTrash />
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
             )}
         </div> 
     );
@@ -214,103 +239,90 @@ export default function Dashboard() {
 const styles = {
     formContainer: {
         backgroundColor: '#f8f9fa',
-        padding: '20px',
-        borderRadius: '10px',
-        marginBottom: '30px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        padding: '25px',
+        borderRadius: '12px',
+        marginBottom: '40px',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
     },
     form: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '15px',
-        alignItems: 'flex-end'
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr) auto', 
+        gap: '20px',
+        alignItems: 'end'
     },
     inputGroup: {
         display: 'flex',
         flexDirection: 'column',
-        gap: '5px', 
-        flex: '1 1 150px'
+        gap: '8px',
+    },
+    label: {
+        fontWeight: 'bold',
+        fontSize: '0.9rem',
+        color: '#555'
     },
     input: {
-        padding: '10px',
-        borderRadius: '4px',
-        border: '1px solid #ccc',
+        padding: '12px',
+        borderRadius: '6px',
+        border: '1px solid #ced4da',
         width: '100%',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        fontSize: '1rem'
     },
     addButton: {
-        padding: '10px',
+        padding: '12px 25px',
         backgroundColor: '#28a745',
         color: 'white',
         border: 'none',
-        borderRadius: '4px',
+        borderRadius: '6px',
         cursor: 'pointer',
         fontWeight: 'bold',
-        heihgt: '40px',
-        width: '100%'
+        fontSize: '1rem',
+        height: '46px',
+        display: 'flex', alignItems: 'center', justifyContent: 'center'
     },
-    cardContainer: {
-        display: 'flex',       
-        flexWrap: 'wrap',      
-        gap: '20px',           
-        justifyContent: 'flex-start', 
-    },
-    card: {
-        border: '1px solid #eee',
-        borderRadius: '8px',
-        padding: '15px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+    listContainer: {
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
-
-        flex: '1 1 280px',
-        maxWidth: '350px',
-        maxHeight: '250px'
+        gap: '15px'
     },
-    cardHeader: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        marginBottom: '10px'
-    },
-    categoryTag: {
-        fontSize: '0.8em',
-        backgroundColor: '#e9ecef',
-        padding: '4px 8px',
-        borderRadius: '15px',
-        fontWeight: 'bold',
-        color: '#555'
-    },
-    sharedTag: {
-        fontSize: '0.8em',
-        backgroundColor: '#d4edda',
-        color: '#155724',
-        padding: '4px 8px',
-        borderRadius: '15px',
-        fontWeight: 'bold'
-    },
-    actions: {
-        marginTop: '15px',
+    listItem: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        gap: '10px'
+        padding: '20px',
+        borderRadius: '10px',
+        border: '1px solid #eee',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.03)',
+        transition: 'transform 0.1s',
     },
-    shareButton: {
-        backgroundColor: '#007bff',
+    categoryBadge: {
+        background: '#e9ecef',
+        color: '#495057',
+        padding: '6px 12px',
+        borderRadius: '15px',
+        fontSize: '0.7rem',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        minWidth: '90px',
+        textAlign: 'center',
+        display: 'inline-block',
+    },
+    btnShare: {
+        background: '#007bff',
         color: 'white',
         border: 'none',
-        padding: '5px 10px',
-        borderRadius: '4px',
+        padding: '8px 15px',
+        borderRadius: '5px',
         cursor: 'pointer',
-        flex: 1
+        display: 'flex', alignItems: 'center', gap: '5px'
     },
-    deleteButton: {
-        backgroundColor: '#dc3545',
+    btnDelete: {
+        background: '#dc3545',
         color: 'white',
         border: 'none',
-        padding: '5px 10px',
-        borderRadius: '4px',
-        cursor: 'pointer'
+        padding: '10px',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center'
     }
 };
