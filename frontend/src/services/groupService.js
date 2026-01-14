@@ -13,7 +13,7 @@ const findUserByEmail = async (email) => {
     return user.id;
 }
 
-export const createGroup = async (groupData) => {
+export const createGroup = async (groupName) => {
     const ownerId = getCurrentUserId();
     const response = await fetch('/api/groups', {
         method: 'POST',

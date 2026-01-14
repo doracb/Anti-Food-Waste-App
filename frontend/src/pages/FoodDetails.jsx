@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getFoodById, deleteFood } from '../services/foodService';
+import { getCurrentUser } from '../services/authService';
+import { createClaim } from '../services/claimService';
 
 export default function FoodDetails() {
     const { id } = useParams();
@@ -31,14 +33,22 @@ export default function FoodDetails() {
         try {
             await deleteFood(id);
             alert("Produs șters cu succes!");
-            navigate('/dashboard'); 
+            navigate('/dashboard');
         } catch (err) {
             alert(err.message);
         }
     };
 
-    const handleClaim = () => {
-        
+    const handleClaim = async () => {
+        if (!window.confirm("Ești sigur că vrei să revendici acest produs? Proprietarul va primi o notificare.")) return;
+
+        try {
+            await createClaim(id);
+            alert("Cererea a fost trimisă cu succes! Vei fi notificat dacă proprietarul acceptă.");
+            navigate('/dashboard');
+        } catch (err) {
+            alert("Eroare: " + err.message);
+        }
     };
 
     const getDaysUntilExpiration = (dateString) => {
@@ -50,10 +60,10 @@ export default function FoodDetails() {
     };
 
     if (loading) return <div style={styles.centerMsg}>Se încarcă detaliile... </div>;
-    
+
     if (error) return (
         <div style={styles.centerMsg}>
-            <h3 style={{color: 'red'}}>Eroare</h3>
+            <h3 style={{ color: 'red' }}>Eroare</h3>
             <p>{error}</p>
             <button onClick={() => navigate('/dashboard')} style={styles.backButton}>Înapoi</button>
         </div>
@@ -68,40 +78,40 @@ export default function FoodDetails() {
     return (
         <div style={styles.container}>
             <div style={styles.card}>
-                
+
                 <div style={styles.header}>
                     <span style={styles.categoryTag}>{food.category}</span>
-                    {food.is_available ? 
-                        <span style={styles.statusAvailable}>Disponibil</span> : 
+                    {food.is_available ?
+                        <span style={styles.statusAvailable}>Disponibil</span> :
                         <span style={styles.statusPrivate}>Privat</span>
                     }
                 </div>
 
                 <h1 style={styles.title}>{food.name}</h1>
-                
+
                 <div style={styles.infoContainer}>
                     <div style={styles.row}>
-                        <strong>Cantitate:</strong> 
+                        <strong>Cantitate:</strong>
                         <span>{food.quantity_value} {food.quantity_unit}</span>
                     </div>
-                    
+
                     <div style={styles.row}>
-                        <strong>Expiră în:</strong> 
-                        <span style={{color: daysLeft <= 3 ? '#d9534f' : '#28a745', fontWeight: 'bold'}}>
+                        <strong>Expiră în:</strong>
+                        <span style={{ color: daysLeft <= 3 ? '#d9534f' : '#28a745', fontWeight: 'bold' }}>
                             {daysLeft} zile
-                        </span> 
-                        <span style={{fontSize: '0.8em', color: '#666'}}>
+                        </span>
+                        <span style={{ fontSize: '0.8em', color: '#666' }}>
                             ({new Date(food.expiration_date).toLocaleDateString()})
                         </span>
                     </div>
 
                     <div style={styles.row}>
-                        <strong>Proprietar:</strong> 
+                        <strong>Proprietar:</strong>
                         <span>{ownerName}</span>
                     </div>
-                    
+
                     <div style={styles.row}>
-                        <strong>Oraș:</strong> 
+                        <strong>Oraș:</strong>
                         <span>{food.User ? food.User.city : '-'}</span>
                     </div>
                 </div>
@@ -112,15 +122,15 @@ export default function FoodDetails() {
                             Șterge Produsul
                         </button>
                     ) : (
-                        <button 
-                            onClick={handleClaim} 
-                            style={styles.claimButton} 
+                        <button
+                            onClick={handleClaim}
+                            style={styles.claimButton}
                             disabled={!food.is_available}
                         >
                             {food.is_available ? "Revendică acest aliment" : " Indisponibil"}
                         </button>
                     )}
-                    
+
                     <button onClick={() => navigate(-1)} style={styles.backButton}>
                         Înapoi
                     </button>
@@ -217,7 +227,7 @@ const styles = {
     },
     claimButton: {
         padding: '15px',
-        backgroundColor: '#4CAF50', 
+        backgroundColor: '#4CAF50',
         color: 'white',
         border: 'none',
         borderRadius: '8px',
