@@ -65,6 +65,7 @@ export default function Dashboard() {
 
   const handleAddSubmit = async (e) => {
     e.preventDefault();
+    console.log("1. Am apăsat butonul de submit");
     try {
       const payload = {
         ...formData,
@@ -73,7 +74,13 @@ export default function Dashboard() {
           : null,
       };
 
-      await addFood(payload);
+      console.log("2. Datele pregătite pentru trimitere:", payload); // <--- DEBUG verify payload
+
+      console.log("3. Trimit cererea către server...");
+
+      const response = await addFood(payload);
+
+      console.log("4. Răspuns primit de la server:", response);
 
       setFormData({
         name: "",
@@ -84,6 +91,7 @@ export default function Dashboard() {
       });
 
       loadData();
+      alert("Produs adăugat cu succes!");
     } catch (err) {
       alert(err.message);
     }
