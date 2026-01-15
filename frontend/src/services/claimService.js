@@ -1,19 +1,30 @@
-import { getCurrentUserId } from './authService';
+import { getCurrentUser } from './authService';
 
-const getHeaders = () => ({
-    'Content-Type': 'application/json'
-});
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000');
+
+const getAuthHeaders = () => {
+    const user = getCurrentUser();
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+
+    if (user && user.token) {
+        headers['Authorization'] = `Bearer ${user.token}`;
+    }
+
+    return headers;
+};
 
 export const createClaim = async (foodId) => {
-    const userId = getCurrentUserId();
-    if (!userId) throw new Error("Trebuie să fii autentificat.");
+    const user = getCurrentUser();
+    if (!user) throw new Error("Trebuie să fii autentificat.");
 
-    const response = await fetch('/api/claims', {
+    const response = await fetch(`${API_URL}/api/claims`, {
         method: 'POST',
-        headers: getHeaders(),
+        headers: getAuthHeaders(),
         body: JSON.stringify({
             food_id: foodId,
-            claimant_id: userId
+            claimant_id: user.id
         })
     });
 
@@ -25,29 +36,42 @@ export const createClaim = async (foodId) => {
 };
 
 export const getMyClaims = async () => {
-    const userId = getCurrentUserId();
-    const response = await fetch(`/api/claims/user/${userId}`);
+    const user = getCurrentUser();
+    if (!user) return [];
+
+    const response = await fetch(`${API_URL}/api/claims/user/${user.id}`, {
+        headers: getAuthHeaders()
+    });
     
     if (!response.ok) {
+        if (response.status === 404) return [];
         throw new Error("Nu am putut încărca revendicările.");
     }
     return await response.json();
 };
 
 export const getClaimsOnMyFood = async () => {
-    const userId = getCurrentUserId();
-    const response = await fetch(`/api/claims/owner/${userId}`);
+    const user = getCurrentUser();
+    if (!user) return [];
+
+    const response = await fetch(`${API_URL}/api/claims/owner/${user.id}`, {
+        headers: getAuthHeaders()
+    });
     
-    if (!response.ok) throw new Error("Eroare la încărcarea cererilor primite.");
+    if (!response.ok) {
+         if (response.status === 404) return [];
+         throw new Error("Eroare la încărcarea cererilor primite.");
+    }
     return await response.json();
 };
 
 export const updateClaimStatus = async (claimId, status) => {
-    const userId = getCurrentUserId();
-    const response = await fetch(`/api/claims/${claimId}`, {
+    const user = getCurrentUser();
+    
+    const response = await fetch(`${API_URL}/api/claims/${claimId}`, {
         method: 'PUT',
-        headers: getHeaders(),
-        body: JSON.stringify({ status, userId })
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ status, userId: user.id })
     });
 
     if (!response.ok) {
