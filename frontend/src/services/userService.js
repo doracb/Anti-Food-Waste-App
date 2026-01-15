@@ -47,3 +47,19 @@ export const getUsersInCity = async (city) => {
     if (!response.ok) throw new Error('Nu am găsit utilizatori în acest oraș');
     return await response.json();
 };
+
+export const deleteUserAccount = async () => {
+    const id = getCurrentUserId();
+    
+    const response = await fetch(`${API_URL}/api/users/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+    });
+
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Eroare la ștergerea contului');
+    }
+    
+    return true;
+};

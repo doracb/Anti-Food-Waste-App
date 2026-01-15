@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { FaUserCircle, FaMapMarkerAlt, FaSave, FaCalendarAlt } from 'react-icons/fa';
-import { getUserProfile, updateUserProfile } from '../services/userService';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaUserCircle, FaMapMarkerAlt, FaSave, FaCalendarAlt, FaTrash } from 'react-icons/fa';
+import { getUserProfile, updateUserProfile, deleteUserAccount } from '../services/userService';
 import { getCurrentUserId, setUser } from '../services/authService';
 
 export default function Profile() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const currentUserId = getCurrentUserId();
 
     const profileId = id || currentUserId;
@@ -39,6 +40,22 @@ export default function Profile() {
             setIsEditing(false);
             loadProfile();
             alert('Profil actualizat!');
+            window.location.reload();
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        if (!window.confirm("Ești sigur că vrei să îți ștergi contul DEFINITIV? Această acțiune nu poate fi anulată.")) {
+            return;
+        }
+
+        try {
+            await deleteUserAccount();
+            localStorage.removeItem('currentUser');
+            alert("Contul a fost șters cu succes. Ne pare rău să te vedem plecând!");
+            navigate('/login');
             window.location.reload();
         } catch (error) {
             alert(error.message);
@@ -99,6 +116,29 @@ export default function Profile() {
                     </button>
                     <button onClick={() => setIsEditing(false)} style={{ background: '#6c757d', color: 'white', border: 'none', padding: '10px', borderRadius: '5px', cursor: 'pointer' }}>
                         Anulează
+                    </button>
+                </div>
+            )}
+
+            {isMyProfile && !isEditing && (
+                <div style={{ marginTop: '50px', borderTop: '2px solid #ffeeba', paddingTop: '20px' }}>
+                    <h4 style={{ color: '#dc3545', marginTop: 0 }}>Zona de Pericol</h4>
+                    <button
+                        onClick={handleDeleteAccount}
+                        style={{
+                            background: '#dc3545',
+                            color: 'white',
+                            border: 'none',
+                            padding: '10px 15px',
+                            borderRadius: '5px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            fontWeight: 'bold'
+                        }}
+                    >
+                        <FaTrash /> Șterge Contul
                     </button>
                 </div>
             )}
