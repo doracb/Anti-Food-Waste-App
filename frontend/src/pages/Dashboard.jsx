@@ -137,6 +137,13 @@ export default function Dashboard() {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
+  const getUrgentFoods = () => {
+    return foods.filter(food => {
+      const daysLeft = getDaysUntilExpiration(food.expiration_date);
+      return daysLeft >= 0 && daysLeft <= 3 && !food.is_available;
+    });
+  };
+
   if (!user) {
     return <div style={{ padding: "20px" }}>Vă rugăm să vă autentificați.</div>;
   }
@@ -144,6 +151,28 @@ export default function Dashboard() {
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
       <h1>Frigiderul lui {user.name || user.username}</h1>
+
+      {getUrgentFoods().length > 0 && (
+        <div style={styles.alertBanner}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+            <FaBell style={{ color: '#856404', fontSize: '1.2rem' }} />
+            <strong style={{ fontSize: '1.1rem' }}>Produse care expiră curând!</strong>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '10px' }}>
+            {getUrgentFoods().map(food => (
+              <div key={food.id} style={styles.alertItem}>
+                <span>{food.name} ({getDaysUntilExpiration(food.expiration_date)} zile)</span>
+                <button 
+                  onClick={() => handleShare(food.id)}
+                  style={styles.alertShareBtn}
+                >
+                  <FaShareAlt /> Share
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={styles.formContainer}>
         <h3 style={{ marginTop: 0, marginBottom: "15px" }}>
@@ -337,7 +366,7 @@ export default function Dashboard() {
                     </div>
                   ) : acceptedClaim ? (
                     <div style={{ color: "#155724", fontWeight: "bold" }}>
-                      ✅ Rezervat pentru{" "}
+                      Rezervat pentru{" "}
                       {acceptedUser
                         ? acceptedUser.name || acceptedUser.username
                         : "Vecin"}
@@ -569,5 +598,36 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+  },
+  alertBanner: {
+    backgroundColor: "#fff3cd",
+    border: "1px solid #ffeeba",
+    color: "#856404",
+    padding: "20px",
+    borderRadius: "12px",
+    marginBottom: "30px",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+  },
+  alertItem: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    padding: "10px 15px",
+    borderRadius: "8px",
+    fontSize: "0.95rem",
+  },
+  alertShareBtn: {
+    backgroundColor: "#856404",
+    color: "white",
+    border: "none",
+    padding: "5px 12px",
+    borderRadius: "5px",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "5px",
+    fontSize: "0.85rem",
+    fontWeight: "bold",
   },
 };
