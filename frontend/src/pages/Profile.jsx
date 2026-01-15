@@ -122,7 +122,6 @@ export default function Profile() {
 
             {isMyProfile && !isEditing && (
                 <div style={{ marginTop: '50px', borderTop: '2px solid #ffeeba', paddingTop: '20px' }}>
-                    <h4 style={{ color: '#dc3545', marginTop: 0 }}>Zona de Pericol</h4>
                     <button
                         onClick={handleDeleteAccount}
                         style={{
